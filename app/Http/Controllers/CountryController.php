@@ -3,21 +3,34 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use DB;
+use League\Flysystem\Exception;
 
 class CountryController extends Controller
 {
+
+    function __construct() {
+        if(!\Auth::check()){
+            abort(403, 'Unauthorized action.');
+        }
+    }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function doGet()
     {
-        $countries = DB::select('select * from country where status=:status', [":status" => 1]);
-        return json_encode($countries);
+        header("Content-type: text/html; charset=utf-8");
+        // $countries = DB::select('select * from country where status=:status', [":status" => 1]);
+        $countries = \App\Country::all();
+        return \Response::json($countries);
+    }
 
+    public function ViewList()
+    {
+        $countries = \DB::select('SELECT * from country where status=:status', [":status" => 1]);
+        return view('cms/country/list', ['countries' => $countries]);
     }
 
     /**
@@ -27,7 +40,7 @@ class CountryController extends Controller
      */
     public function create()
     {
-        //
+        $new = $request->only('contry_code', 'contry_name_tc', 'contry_name_en', 'contry_name_sc');
     }
 
     /**
@@ -47,9 +60,16 @@ class CountryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function doDetail($id)
     {
-        //
+        $countries = [];
+        if(!empty($id)){
+            $countries = DB::select('SELECT * from country where country_id=:country_id and status=:status LIMIT 1', [
+                ":status" => 1,
+                ":country_id" => $id
+            ]);
+        }
+        return $countries;
     }
 
     /**
@@ -70,7 +90,7 @@ class CountryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function doUpdate(Request $request, $id)
     {
         //
     }
