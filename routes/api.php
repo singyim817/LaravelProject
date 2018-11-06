@@ -18,19 +18,16 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 // List country
-Route::get('countries2',  'CountryController@index');
-
-// List country
-Route::get('countries',  'CountryController@index');
+Route::get('countries',  'CountryController@doGet');
 
 // Get Single Country
-Route::get('country/{id}',  'CountryController@show');
+Route::get('country/{id}',  'CountryController@doDetail');
 
 // Create new Country
 Route::post('country',  'CountryController@store');
 
 // Update Country
-Route::put('country/',  'CountryController@edit');
+Route::put('country/',  'CountryController@doUpdate');
 
 // Delete Country
 Route::delete('country/',  'CountryController@destory');
